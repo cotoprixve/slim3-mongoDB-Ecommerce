@@ -72,7 +72,7 @@ $app->group('/account/', function () {
         if ( $x ) {
             return $res->withRedirect( $this->router->pathFor('detail') );
         } else {
-            
+
         }
 
     })->setName('detail');
@@ -138,6 +138,12 @@ $app->group('/admin/', function () {
 
         }
 
+        if( $_SESSION['role'] != 'admin' ) {
+
+            return $res->withRedirect( $this->router->pathFor('noadmin') );
+
+        }
+
         $nro = count( explode( '/', $req->getUri()->getPath() ) );
 
         $x['path'] = str_repeat( "../", $nro );
@@ -145,6 +151,12 @@ $app->group('/admin/', function () {
         return $this->renderer->render( $res, 'admin.phtml', $x );
 
     })->setName('admin');
+
+    $this->get('noadmin', function( $req, $res, $args ) {
+
+        return $this->renderer->render( $res, 'noadmin.phtml' );
+
+    })->setName('noadmin');
 
     $this->get('manage[/{params:.*}]', function( $req, $res, $args ) {
 

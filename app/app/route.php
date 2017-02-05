@@ -152,11 +152,13 @@ $app->group('/admin/', function () {
 
     })->setName('admin');
 
+
     $this->get('noadmin', function( $req, $res, $args ) {
 
         return $this->renderer->render( $res, 'noadmin.phtml' );
 
     })->setName('noadmin');
+
 
     $this->get('manage[/{params:.*}]', function( $req, $res, $args ) {
 
@@ -202,6 +204,53 @@ $app->group('/admin/', function () {
 
         }
     })->setName('manage');
+
+
+    $this->post('manage/add', function( $req, $res, $args ) {
+
+        $files = $req->getUploadedFiles();
+
+        if ( empty( $files['fileToUpload'] ) ) {
+
+            throw new Exception('Expected a fileToUpload');
+
+        }
+
+        $uploadFileName = null;
+
+        $newfile = $files['fileToUpload'];
+        
+        $target_dir = "../uploads/";
+
+        if ($newfile->getError() === UPLOAD_ERR_OK) {
+
+            $uploadFileName = $newfile->getClientFilename();
+
+            $temp = explode( '.', $uploadFileName );
+
+            $uploadFileName = round( microtime(true) ) . '.' . end($temp);
+
+            $newfile->moveTo("$target_dir/$uploadFileName");
+
+        }
+
+        $um = new AppModel();
+
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $um->add( 
+                            $req->getParsedBody(), $uploadFileName 
+                        )
+            )
+        );
+
+//        return $res->withRedirect( $this->router->pathFor('manage') );
+        
+    });
+
 
     $this->post('manage/update/save', function( $req, $res, $args ) {
 

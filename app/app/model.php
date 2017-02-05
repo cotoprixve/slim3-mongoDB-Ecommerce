@@ -376,7 +376,7 @@ class AppModel
             $table = CT\TABLE_PRODUCTS;
             
             # Set up filter
-            $filter = array( '_id' => new MongoDB\BSON\ObjectID( $data["update"] ) );
+            $filter = array( '_id' => new MongoDB\BSON\ObjectID( $id ) );
             
             # Set up query
             $query = new MongoDB\Driver\Query( $filter );
@@ -461,6 +461,51 @@ class AppModel
             if ( $res ) {
 
                 return array( 'msg' => CT\MSG['OKUPDATE'] );
+
+            } else {
+
+                return array( 'msg' => CT\ERROR[501] );
+
+            }
+
+        } catch ( MongoDB\Driver\Exception\Exception $e ) {
+            
+            # filename with errors
+            $filename = basename(__FILE__);
+            
+            # error message
+            self::error_msg( $filename, $e );
+
+        }
+    }
+  
+    public function add( $data, $image=null )
+    {
+         try {
+            # Set table
+            $table = CT\TABLE_PRODUCTS;
+
+            # Update image if upload one
+            if ( !is_null( $image ) )
+                $data['image'] = $image;
+
+            # Prepare writing (bulkwrite)
+            $bulk = new MongoDB\Driver\BulkWrite;
+            
+            # Save back to the database            
+            $bulk->insert(
+
+                $data
+
+            );
+            
+            # Run the query
+            $res = $this->conn->executeBulkWrite( $table, $bulk );
+            
+            # Response query
+            if ( $res ) {
+
+                return array( 'msg' => CT\MSG['OKINSERT'], 'status' => 200 );
 
             } else {
 

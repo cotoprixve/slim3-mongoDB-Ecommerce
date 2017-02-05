@@ -19,7 +19,7 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <?php if (isset($_SESSION["account"])) { ?>
-                    <li><a href="account/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+                    <li><a href="./logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
                 <?php } ?>
             </ul>
         </div>

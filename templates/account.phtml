@@ -16,6 +16,9 @@
 <?php if (!isset($_SESSION["account"])) { ?>
     <div class="container col-md-6">
         <h2>Register</h2>
+        
+        <?php if( isset( $msg ) ) echo $msg; ?>
+
         <form role="form" method="post" action="./register">
             <div class="form-group">
                 <label for="email">Username:</label>
@@ -44,14 +47,14 @@
 
     <div class="container col-md-6">
         <h2>Login</h2>
-        <form role="form" method="post" action="./account/login">
+        <form role="form" method="post" id="data">
             <div class="form-group">
-                <label for="email">Username:</label>
-                <input required name="username" type="text" class="form-control" id="email" placeholder="Username">
+                <label for="username">Username:</label>
+                <input required name="username" type="text" class="form-control" id="username" placeholder="Username">
             </div>
             <div class="form-group">
-                <label for="email">Password:</label>
-                <input required name="password" type="password" class="form-control" id="email"
+                <label for="password">Password:</label>
+                <input required name="password" type="password" class="form-control" id="password"
                        placeholder="Password"></input>
             </div>
             <input type="hidden" name="login" value="login">
@@ -112,6 +115,29 @@
 
 </body>
 <script>
+    $(document).ready( function () {
+        $("form#data").submit( function ( event ) {
+          //disable the default form submission
+          event.preventDefault();
+          //grab all form data  
+          var formData = new FormData($(this)[0]);
+            $.post("account/login",
+                {
+                    username: $('#username').val(),
+                    password: $('#password').val()
+                },
+                function (data, status) {
+                    console.log(data);
+                    var myArray = jQuery.parseJSON(data);
+                    alert(myArray.msg);
+                    if(myArray.status==200)
+                        window.location.href = "detail";
+                });
+
+          return false;
+        });
+      });
+
     $(document).ready(function () {
         $("#updateAddress").click(function () {
             $.post("address/save",

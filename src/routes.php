@@ -29,11 +29,11 @@ $app->get('/[{name}]', function ($request, $response, $args) {
 					# Set up filter
 					$filter = [$value => new MongoDB\BSON\Regex("$keyword","i")];
 					$query = new MongoDB\Driver\Query($filter);
-					$cursor = $mng->executeQuery('test.products', $query);
+					$cursor = $mng->executeQuery(App\Lib\Constants\TABLE_PRODUCTS, $query);
 					$total = json_decode(json_encode($cursor->toArray()), true);
 				} else {
 					$query = new MongoDB\Driver\Query([]); 			     
-					$rows = $mng->executeQuery("test.products", $query);
+					$rows = $mng->executeQuery(App\Lib\Constants\TABLE_PRODUCTS, $query);
 					$total = json_decode(json_encode($rows->toArray()), true);
 				}
 				$arr = array(

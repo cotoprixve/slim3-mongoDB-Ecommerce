@@ -5,6 +5,12 @@ $app->group('/account/', function () {
    
     $this->get('login', function ( $req, $res, $args ) {
 
+        if( isset( $_SESSION['account'] ) ) {
+
+            return $res->withRedirect( $this->router->pathFor('detail') );
+
+        }
+
         $elp = explode( '/', $req->getUri()->getBasePath() );
 
         $x['path'] = '/' . $elp[1] . '/';
@@ -12,6 +18,7 @@ $app->group('/account/', function () {
         return $this->renderer->render( $res, 'account.phtml', $x );
 
     })->setName('login');
+
 
     $this->get('detail', function ( $req, $res, $args ) {
 
@@ -32,6 +39,7 @@ $app->group('/account/', function () {
         return $this->renderer->render( $res, 'account.phtml', $x );
 
     })->setName('detail');
+
 
     $this->get('order[/{id}]', function ($req, $res, $args) {
 
@@ -61,6 +69,7 @@ $app->group('/account/', function () {
         
     });
 
+
     $this->post('register', function ( $req, $res, $args ) {
 
         $um = new AppModel();
@@ -76,6 +85,7 @@ $app->group('/account/', function () {
         }
 
     })->setName('detail');
+
 
     $this->post('address/save', function ( $req, $res ) {
 
@@ -94,6 +104,7 @@ $app->group('/account/', function () {
 
     });
     
+
     $this->post('delete/{id}', function ( $req, $res, $args ) {
         $um = new AppModel();
         
@@ -107,17 +118,24 @@ $app->group('/account/', function () {
         );
     });
     
+
     $this->post('account/login', function ( $req, $res, $args ) {
 
         $um = new AppModel();
 
-        $arr = $um->login( $req->getParsedBody() );
-
-        return $res->withRedirect( $this->router->pathFor('detail') );
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $arr = $um->login( $req->getParsedBody() )
+            )
+        );
 
     });
     
-    $this->get('account/logout', function ( $req, $res, $args ) {
+
+    $this->get('logout', function ( $req, $res, $args ) {
 
         session_destroy();
 

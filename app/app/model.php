@@ -195,16 +195,16 @@ class AppModel
 
             # Set up filter
             $filter = array( 'username' => $username, "password" => $password );
-            
+
             # Set up query
             $query = new MongoDB\Driver\Query( $filter );
             
             # Run the query and position record
             $rows = $this->conn->executeQuery( $table, $query );
-            
+
             # Position the record
             $login = current( $rows->toArray() );
-            
+
             # Response query
             if ( !empty( $login ) ) {
 
@@ -212,7 +212,7 @@ class AppModel
                 
                 $_SESSION['role'] = $login->role;
                 
-                return true;
+                return array('msg' => CT\MSG['OKLOGIN'], 'status' => 200 );
 
             } else {
                 
@@ -220,9 +220,11 @@ class AppModel
                 
                 $_SESSION['role'] = null;
                 
-                return false;
+                return array('msg' => CT\ERROR['FAILLOGIN'] );
+
 
             }
+
 
         } catch ( MongoDB\Driver\Exception\Exception $e ) {
             

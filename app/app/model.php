@@ -220,7 +220,7 @@ class AppModel
                 
                 $_SESSION['role'] = null;
                 
-                return array('msg' => CT\ERROR['FAILLOGIN'] );
+                return array('msg' => CT\ERROR['FAILLOGIN'], 'status' => 400 );
 
 
             }

@@ -23,6 +23,7 @@ const SLIM_DEBUG = true;
 /** ERROR CODE **/
 const ERROR = array(
 					501 => "Failed update registry or updated registry",
+					'FAILLOGIN' => "Wrong username or password"
 					);
 /** MESSAGES **/
 const MSG = array(
@@ -31,6 +32,7 @@ const MSG = array(
 				  'OKGET'	 	=> 'Success data delivery',
 				  'SENDDATA' 	=> 'Success data delivery',
 				  'OKINSERT' 	=> "Successful income",
+				  'OKLOGIN' 	=> "Successful login",
 				  'OKINSERT1' 	=> " Joined/",
 				  'OKDELETE' 	=> "Delete successful",
 				  'OKDELETE1'	=> " delete/",

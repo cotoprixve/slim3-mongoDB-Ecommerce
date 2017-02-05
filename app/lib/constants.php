@@ -7,7 +7,7 @@ const DB_PASSWORD = '';
 
 const DB_HOST = "mongodb://localhost:27017";
 
-const DB_NAME = 'test';
+const DB_NAME = 'myecommerce';
 const TABLE_PRODUCTS = DB_NAME . '.' . 'products';
 const TABLE_USERS = DB_NAME . '.' . 'users';
 const TABLE_ORDERS = DB_NAME . '.' . 'orders';

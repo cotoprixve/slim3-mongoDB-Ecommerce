@@ -93,19 +93,19 @@
 <div class="container">
     <div class="row">
         <h2>Add a product</h2>
-        <form role="form" method="post" enctype="multipart/form-data">
+        <form id="data">
             <div class="form-group">
                 <label for="email">Product name:</label>
-                <input required name="title" type="text" class="form-control" id="email" placeholder="Nombre del producto">
+                <input required name="title" type="text" class="form-control" id="email" placeholder="Product name">
             </div>
             <div class="form-group">
                 <label for="email">Product description:</label>
             <textarea required name="description" type="text" class="form-control" id="email"
-                      placeholder="Descripción del produto"></textarea>
+                      placeholder="Product description"></textarea>
             </div>
             <div class="form-group">
                 <label for="email">Price:</label>
-                <input required name="price" type="number" class="form-control" id="email" placeholder="Precio del producto">
+                <input required name="price" type="number" class="form-control" id="email" placeholder="Price">
             </div>
 
 
@@ -122,19 +122,48 @@
                     <!-- image-preview-input -->
                     <div class="btn btn-default image-preview-input">
                         <span class="glyphicon glyphicon-folder-open"></span>
-                        <span class="image-preview-input-title">Search</span>
+                        <span class="image-preview-input-title">Browse</span>
                         <input type="file" accept="image/png, image/jpeg, image/gif" name="fileToUpload"/>
                         <!-- rename it -->
                     </div>
                 </span>
                 </div><!-- /input-group image-preview [TO HERE]-->
             </div>
-            <button type="submit" class="btn btn-default">Save product</button>
+            <button type="submit" class="btn btn-default" id="addProduct">Save product</button>
+        </form>
     </div>
-    </form>
 </div>
 
 <script>
+    $(document).ready(function () {
+        $("form#data").submit(function(event){
+         
+          //disable the default form submission
+          event.preventDefault();
+         
+          //grab all form data  
+          var formData = new FormData($(this)[0]);
+         
+          $.ajax({
+            url: 'manage/add',
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data, status) {
+                    var myArray = jQuery.parseJSON(data);
+                    alert(myArray.msg);
+                    if(myArray.status==200)
+                        window.location.href = "manage";
+                }
+          });
+
+          return false;
+        });
+      });
+
     $(document).on('click', '#close-preview', function () {
         $('.image-preview').popover('hide');
         // Hover befor close the preview
@@ -161,8 +190,8 @@
         $('.image-preview').popover({
             trigger: 'manual',
             html: true,
-            title: "<strong>Vista Previa</strong>" + $(closebtn)[0].outerHTML,
-            content: "No hay imágen",
+            title: "<strong>Preview</strong>" + $(closebtn)[0].outerHTML,
+            content: "Image not found",
             placement: 'bottom'
         });
         // Clear event

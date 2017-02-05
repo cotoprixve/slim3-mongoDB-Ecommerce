@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    	<meta charset="UTF-8">
+    	<title>My-Commerce - E-commerce platform</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="../resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../resources/js/jquery.min.js"></script>
+        <script src="../resources/bootstrap/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="../resources/css/style.css">
+        <script src="../resources/js/script.js"></script>
+
+        <style>
+            .body {
+                margin: 50px 0 0 0;
+                padding: 0;
+                width: 100%;
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                text-align: center;
+                color: #aaa;
+                font-size: 18px;
+            }
+
+            .h1 {
+                color: #719e40;
+                letter-spacing: -3px;
+                font-family: 'Lato', sans-serif;
+                font-size: 100px;
+                font-weight: 200;
+                margin-bottom: 0;
+            }
+        </style>
+
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="index.php">My-Commerce</a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="./">Home</a></li>
+
+                        <?php if (isset($_SESSION["account"])) { ?>
+                            <li class="active"><a href="account">Orders</a></li>
+                        <?php } else { ?>
+                            <li class="active"><a href="account">Account</a></li>
+                        <?php } ?>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+
+                        <?php if (isset($_SESSION["account"])) { ?>
+                            <li><a href="account/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+                        <?php } ?>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+
+            <div class="well well-sm">
+                <strong>Display</strong>
+                <div class="btn-group">
+                    <a href="#" id="list" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-list">
+                    </span>List</a> <a href="#" id="grid" class="btn btn-default btn-sm"><span
+                            class="glyphicon glyphicon-th"></span>Grid</a>
+                </div>
+                <a id="addToCart" class="btn btn-default btn-md" href="cart">
+                    <span class="glyphicon glyphicon-shopping-cart btn-md" id="basket"></span> products in
+                    baseket
+                </a>
+            </div>
+
+            <?php if (!isset($_GET["id"])) { ?>
+            <div class="well well-lg">
+                <form action="./" method="get">
+                    <div>
+                        <div class="col-md-6">
+                            <label for="sel1" style="position:relative;top:-18px;">Choose category</label>
+                            <select name="search_cat" class="form-control" style="position:relative;top:-20px;" id="sel1">
+                                <option value="title">Product Name</option>
+                                <option value="description">Product Description</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 input-group" style="position:relative;top:5px;">
+                            <input type="text" name="keyword" class="form-control" placeholder="Search for...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">
+                                    Go!
+                                </button>
+                            </span>
+                        </div><!-- /input-group -->
+                    </div>
+                </form>
+
+            </div>
+            <?php if(isset($name)) echo htmlspecialchars($name); ?>
+                <div class="row">
+                </div>
+            <?php } else { ?>
+                <a onclick="window.history.back();" href="#" class="btn btn-primary btn-lg">
+                    <span class="glyphicon glyphicon-arrow-left"></span> Back
+                </a>
+            <?php } ?>
+            <?php if (!isset($_GET["id"])) { ?>
+            <hr>
+
+
+                <div id="products" class="row list-group">
+                    <?php
+                    if ($num_docs > 0) {
+                        // loop over the results
+                        foreach ($cursor as $obj) {
+                            ?>
+                            <div class="item  col-xs-4 col-lg-4">
+                                <div class="thumbnail">
+                                    <img class="group list-group-image" src="../uploads/<?php echo $obj['image']; ?>" alt=""/>
+                                    <div class="caption">
+                                        <h4 class="group inner list-group-item-heading">
+                                        	<a
+                                                href="index.php?id=<?php echo $obj['_id']['$oid']; ?>"><?php echo $obj['title']; ?>
+                                            </a>
+                                        </h4>
+                                        <p id="description" class="group inner list-group-item-text">
+                                            <?php echo $obj['description']; ?></p>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-6">
+                                                <p class="lead">
+                                                    BsF. <?php echo $obj['price']; ?></p>
+                                            </div>
+                                            <div class="col-xs-12 col-md-6">
+                                                <a class="btn btn-success"
+                                                   onclick=addtocart('<?php echo $obj['_id']['$oid'] . "','" . urlencode($obj['title']) . "','" . $obj["price"]; ?>')>Add to car</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <?php
+                        }
+                    } else {
+                        // if no products are found, we show this message
+                        echo "No products found \n";
+                    }
+
+
+                    ?>
+                </div>
+
+            <?php } ?>
+        </div>
+
+    </body>
+
+</html>

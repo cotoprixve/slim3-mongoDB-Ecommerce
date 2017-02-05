@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Mi Cuenta</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="<?php echo $path;?>resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="<?php echo $path;?>resources/js/jquery.min.js"></script>
+        <script src="<?php echo $path;?>resources/bootstrap/js/bootstrap.min.js"></script>
+
+    </head>
+    <body>
+
+        <?php include "menubar.php"; ?>
+
+
+            <div class="container">
+                <h2>Order details</h2>
+                <ul id="basket_list" class="list-group">
+                    <?php
+                    $price = 0;
+                    foreach ($thisSearch as $obj) {
+                        $id = $obj["_id"]['$oid'];
+                        $price += $obj["price"] * $how_many["$id"];
+                        ?>
+
+                        <li class="list-group-item">
+                            <?php echo $obj["title"] . ' x ' . $how_many["$id"]; ?>
+                        </li>
+
+
+                        <?php
+                    }
+
+                    ?>
+                    <li class="list-group-item">
+                        Total price: $. <?php echo number_format($price,2,".",","); ?>
+                    </li>
+                </ul>
+            </div>
+
+
+    </body>
+
+</html>
+

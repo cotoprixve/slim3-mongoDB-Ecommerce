@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>My Shopping Cart</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $path;?>resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="<?php echo $path;?>resources/js/jquery.min.js"></script>
+    <script src="<?php echo $path;?>resources/bootstrap/js/bootstrap.min.js"></script>
+
+    <link href="../resources/css/style.css" rel="stylesheet">
+    <script src="../resources/js/script.js"></script>
+</head>
+<body>
+    <?php include "menubar.php"; ?>
+<div class="container">
+    <div class="well well-sm">
+        <div class="btn-group">
+            <a onclick="reset();" href="#">Empty cart</a>
+        </div>
+    </div>
+
+
+    <ul id="basket_list" class="list-group">
+    </ul>
+    <p id="total">Total: $.</p>
+    <button id="checkout" class="btn btn-primary">Checkout</button>
+</div>
+<script>
+    function reset() {
+        localStorage.removeItem('ids');
+        localStorage.removeItem('names');
+        localStorage.removeItem('total_price');
+        localStorage.removeItem('no_products');
+        alert("No more products in your cart!");
+        window.location = "../";
+    }
+
+    var names = localStorage.getItem("names").split(";");
+    for (var i = 1; i < names.length; i++)
+        $("#basket_list").append('<li class="list-group-item">' + decodeURIComponent((names[i] + '').replace(/\+/g, '%20')) + '</li>');
+
+    $("#total").append(localStorage.getItem("total_price"));
+
+
+    $("#checkout").click(function () {
+        var ids = localStorage.getItem("ids");
+        $.post("cart",
+            {
+                ids: ids
+            },
+            function () {
+                alert("Success! Your order has been processed!");
+                localStorage.removeItem('ids');
+                localStorage.removeItem('names');
+                localStorage.removeItem('total_price');
+                localStorage.removeItem('no_products');
+                window.location = "account";
+            });
+    });
+
+
+</script>
+
+</body>
+</html>

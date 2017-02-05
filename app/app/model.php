@@ -79,11 +79,16 @@ class AppModel
             # Set table
             $table = CT\TABLE_USERS;
             
+            # Set up filter
+            $filter = [ '_id' => new MongoDB\BSON\ObjectID( $_SESSION["account"] ) ]; 
+            
             # Set up query
-            $query = new MongoDB\Driver\Query([]); 
+            $query = new MongoDB\Driver\Query( $filter );                        
 
             # Run the query and position record
             $rows = $this->conn->executeQuery( $table, $query );
+
+            $address = '';
 
             foreach ($rows as $row) {
 
@@ -104,7 +109,7 @@ class AppModel
             # Decode form object
             $something = json_decode( json_encode( $rows->toArray() ), true );
 
-            return array( 'address'=>$address, 'something' => $something );
+            return array( 'address' => $address, 'something' => $something );
 
         } catch ( MongoDB\Driver\Exception\Exception $e ) {
             
@@ -206,6 +211,70 @@ class AppModel
                 $_SESSION["account"] = $login->_id;
                 
                 $_SESSION['role'] = $login->role;
+                
+                return true;
+
+            } else {
+                
+                $_SESSION["account"] = null;
+                
+                $_SESSION['role'] = null;
+                
+                return false;
+
+            }
+
+        } catch ( MongoDB\Driver\Exception\Exception $e ) {
+            
+            # Filename with errors
+            $filename = basename(__FILE__);
+            
+            # Error message
+            self::error_msg( $filename, $e );
+
+        }
+    }
+
+    public function register($data)
+    {
+        try {
+
+            # Set table
+            $table = CT\TABLE_USERS;
+
+            // Create an array of values to insert
+            $username = (isset($data["username"]) ? $data["username"] : $username = null);
+            $password = (isset($data["password"]) ? md5($data["password"]) : $password = null);
+
+            $email = (isset($data["email"]) ? $data["email"] : $email = null);
+            $address = (isset($data["address"]) ? $data["address"] : $address = null);
+
+            # This is a new document to be inserted. The MongoDB\BSON\ObjectID generates a new ObjectId. It is a value used to uniquely identify documents in a collection.
+            $doc = array(
+                'username' => $username,
+                'password' => $password,
+                'email' => $email,
+                'address' => $address,
+                'role' => 'user'
+            );
+
+            # The MongoDB\Driver\BulkWrite collects one or more write operations that should be sent to the server.
+            $bulk = new MongoDB\Driver\BulkWrite();
+
+            # insert user
+            $id = $bulk->insert($doc);
+
+            $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
+
+            $result = $this->conn->executeBulkWrite($table, $bulk, $writeConcern);
+
+
+            # Response query
+            if ( !empty( $id ) ) {
+
+                $_SESSION["account"] = $id;
+                
+                $_SESSION['role'] = $doc['role'];
                 
                 return true;
 

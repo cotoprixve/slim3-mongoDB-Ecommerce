@@ -8,6 +8,9 @@
     <script src="<?php echo $path;?>resources/js/jquery.min.js"></script>
     <script src="<?php echo $path;?>resources/bootstrap/js/bootstrap.min.js"></script>
 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+
 </head>
 <body>
 
@@ -129,9 +132,14 @@
                 function (data, status) {
                     console.log(data);
                     var myArray = jQuery.parseJSON(data);
-                    alert(myArray.msg);
-                    if(myArray.status==200)
-                        window.location.href = "detail";
+                    toastr.options.timeOut = 3000;
+                    if(myArray.status==400) 
+                        toastr.warning(myArray.msg,'Error');
+                    else {
+                        toastr.success(myArray.msg)
+                        var x = setTimeout("window.location.href = 'detail'", 5000);
+                    }
+                    
                 });
 
           return false;

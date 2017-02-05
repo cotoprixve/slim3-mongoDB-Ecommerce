@@ -252,7 +252,7 @@ class AppModel
             # Response query
             if ( $res ) {
 
-                return array('msg' => sprintf( CT\MSG['OKUPDATEADDRESS'], 'Dirección' ) );
+                return array('msg' => sprintf( CT\MSG['OKUPDATEADDRESS'], 'Address' ) );
 
             }else{
 

@@ -10,6 +10,9 @@
 
     <link href="../resources/css/style.css" rel="stylesheet">
     <script src="../resources/js/script.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+
 </head>
 <body>
     <?php include "menubar.php"; ?>
@@ -45,17 +48,27 @@
 
     $("#checkout").click(function () {
         var ids = localStorage.getItem("ids");
-        $.post("cart",
+        $.post("account/cart",
             {
                 ids: ids
             },
-            function () {
-                alert("Success! Your order has been processed!");
-                localStorage.removeItem('ids');
-                localStorage.removeItem('names');
-                localStorage.removeItem('total_price');
-                localStorage.removeItem('no_products');
-                window.location = "account";
+            function (data, status) {
+                console.log(data);
+                var myArray = jQuery.parseJSON(data);
+                toastr.options.timeOut = 3000;
+                if(myArray.status==450) {
+                    toastr.warning(myArray.msg,'Error');
+                    var x = setTimeout("window.location.href = 'account/login?msg=checkout'", 5000);
+                } else {
+                    toastr.success("Success! Your order has been processed!","Success")
+                    localStorage.removeItem('ids');
+                    localStorage.removeItem('names');
+                    localStorage.removeItem('total_price');
+                    localStorage.removeItem('no_products');
+//                    window.location = "account";
+                    var x = setTimeout("window.location.href = 'detail'", 5000);
+                }
+                
             });
     });
 

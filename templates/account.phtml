@@ -20,7 +20,7 @@
     <div class="container col-md-6">
         <h2>Register</h2>
         
-        <?php if( isset( $msg ) ) echo $msg; ?>
+        <?php if( isset( $msg ) && $msg != 'checkout' ) echo $msg; ?>
 
         <form role="form" method="post" action="./register">
             <div class="form-group">
@@ -124,10 +124,12 @@
           event.preventDefault();
           //grab all form data  
           var formData = new FormData($(this)[0]);
+          var msg = "<?php (isset($msg))? $msg:'';?>";
             $.post("account/login",
                 {
                     username: $('#username').val(),
-                    password: $('#password').val()
+                    password: $('#password').val(),
+                    msg: msg
                 },
                 function (data, status) {
                     console.log(data);
@@ -137,7 +139,10 @@
                         toastr.warning(myArray.msg,'Error');
                     else {
                         toastr.success(myArray.msg)
-                        var x = setTimeout("window.location.href = 'detail'", 5000);
+                        if(msg != 'checkout')
+                            var x = setTimeout("window.location.href = 'detail'", 4000);
+                        else
+                            var x = setTimeout("window.location.href = '../cart'", 4000);
                     }
                     
                 });

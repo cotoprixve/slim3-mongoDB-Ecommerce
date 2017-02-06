@@ -14,7 +14,8 @@ $app->group('/account/', function () {
         $elp = explode( '/', $req->getUri()->getBasePath() );
 
         $x['path'] = '/' . $elp[1] . '/';
-
+        $paramValue = $req->getParam('msg');
+        $x['msg'] = ( isset( $paramValue ) ) ? $paramValue : '';
         return $this->renderer->render( $res, 'account.phtml', $x );
 
     })->setName('login');
@@ -85,6 +86,36 @@ $app->group('/account/', function () {
         }
 
     })->setName('detail');
+
+
+    $this->post('cart', function ( $req, $res, $args ) {
+
+        if( !isset( $_SESSION['account'] ) ) {
+
+            return $res
+               ->withHeader('Content-type', 'application/json')
+               ->getBody()
+               ->write(
+                    json_encode(
+                        array('msg'=> 'no loggin\n Will be redirected', 'status'=>450)
+                    )
+                );
+
+        }
+
+        $um = new AppModel();
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+                json_encode(
+                    $um->cart(
+                        $req->getParsedBody()
+                    )
+                )
+            );
+
+    });
 
 
     $this->post('address/save', function ( $req, $res ) {

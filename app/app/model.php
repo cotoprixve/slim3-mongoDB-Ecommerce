@@ -511,7 +511,55 @@ class AppModel
 
             } else {
 
-                return array( 'msg' => CT\ERROR[501] );
+                return array( 'msg' => CT\ERROR[501], 'status' => 400 );
+
+            }
+
+        } catch ( MongoDB\Driver\Exception\Exception $e ) {
+            
+            # filename with errors
+            $filename = basename(__FILE__);
+            
+            # error message
+            self::error_msg( $filename, $e );
+
+        }
+    }
+  
+    public function cart( $data )
+    {
+         try {
+            # Set table
+            $table = CT\TABLE_ORDERS;
+
+            $order = array(
+                'user_id' => $_SESSION["account"],
+                'ids' => $data['ids']
+
+            );
+
+            # The MongoDB\Driver\BulkWrite collects one or more write operations that should be sent to the server.
+            $bulk = new MongoDB\Driver\BulkWrite();
+
+            # Save back to the database            
+            $id = $bulk->insert(
+
+                       $order
+
+                   );
+
+            $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
+
+            $result = $this->conn->executeBulkWrite($table, $bulk, $writeConcern);
+                       
+            # Response query
+            if ( !empty( $id ) ) {
+
+                return array( 'msg' => CT\MSG['OKINSERT'], 'status' => 200 );
+
+            } else {
+
+                return array( 'msg' => CT\ERROR[501], 'status' => 400 );
 
             }
 
